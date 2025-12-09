@@ -1,0 +1,82 @@
+import string
+import secrets
+
+def solicitar_parametros():
+    print("\n=== GENERADOR SEGURO DE CONTRASEÑAS ===")
+    
+    # Solicitar longitud
+    while True:
+        try:
+            longitud = int(input("Ingrese la longitud de la contraseña (8 - 128): "))
+            if 8 <= longitud <= 128:
+                break
+            else:
+                print("Error: la longitud debe estar entre 8 y 128.")
+        except ValueError:
+            print("Error: ingrese un número válido.")
+    
+    # Opciones de caracteres permitidos
+    print("\nSeleccione los tipos de caracteres:")
+    usar_minus = input("Incluir minúsculas? (s/n): ").lower() == "s"
+    usar_mayus = input("Incluir mayúsculas? (s/n): ").lower() == "s"
+    usar_nums  = input("Incluir números? (s/n): ").lower() == "s"
+    usar_esps  = input("Incluir símbolos? (s/n): ").lower() == "s"
+
+    # Validar al menos 1 opción
+    if not (usar_minus or usar_mayus or usar_nums or usar_esps):
+        print("Debe seleccionar al menos un tipo de carácter.")
+        return solicitar_parametros()
+
+    return longitud, usar_minus, usar_mayus, usar_nums, usar_esps
+
+
+def construir_conjunto_caracteres(usar_minus, usar_mayus, usar_nums, usar_esps):
+    caracteres = ""
+
+    if usar_minus:
+        caracteres += string.ascii_lowercase
+    if usar_mayus:
+        caracteres += string.ascii_uppercase
+    if usar_nums:
+        caracteres += string.digits
+    if usar_esps:
+        caracteres += string.punctuation
+
+    return caracteres
+
+
+def generar_contrasena(longitud, chars):
+    # Usar secrets para mayor seguridad
+    return "".join(secrets.choice(chars) for _ in range(longitud))
+
+
+def menu():
+    while True:
+        print("\n===== MENÚ PRINCIPAL =====")
+        print("1. Generar nueva contraseña")
+        print("2. Salir")
+
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == "1":
+            params = solicitar_parametros()
+            longitud, minus, mayus, nums, esps = params
+
+            chars = construir_conjunto_caracteres(minus, mayus, nums, esps)
+
+            contrasena = generar_contrasena(longitud, chars)
+
+            print("\n=== CONTRASEÑA GENERADA ===")
+            print(contrasena)
+            print("============================\n")
+
+        elif opcion == "2":
+            print("Saliendo del programa...")
+            break
+
+        else:
+            print("Opción inválida, intente de nuevo.")
+
+
+if __name__ == "__main__":
+    menu()
